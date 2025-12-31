@@ -10,16 +10,14 @@ body {
     background: black;
     color: gold;
     text-align: center;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     overflow-x: hidden;
 }
 
-/* Heading */
 h1 {
     margin-top: 20px;
 }
 
-/* Slider */
 .slider {
     width: 300px;
     height: 300px;
@@ -31,21 +29,20 @@ h1 {
 }
 
 .slider img {
-    width: 300px;
-    height: 300px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     position: absolute;
     left: 0;
     top: 0;
     transition: transform 0.8s ease-in-out;
 }
 
-/* Message */
 #message {
     font-size: 18px;
     margin-top: 15px;
 }
 
-/* Button */
 button {
     margin: 15px;
     padding: 10px 20px;
@@ -61,16 +58,16 @@ button {
     position: fixed;
     bottom: -10px;
     font-size: 20px;
-    animation: floatUp 6s linear infinite;
+    animation: floatUp 6s linear forwards;
     opacity: 0.8;
 }
 
 @keyframes floatUp {
-    0% {
+    from {
         transform: translateY(0) scale(1);
         opacity: 1;
     }
-    100% {
+    to {
         transform: translateY(-100vh) scale(1.5);
         opacity: 0;
     }
@@ -84,34 +81,34 @@ button {
 <p>Dear <b>my Mamooty 💗💗💗🫂🫂🫂</b></p>
 
 <div class="slider">
-    <img id="photo" src="photos/p1.jpeg">
+    <img id="photo" src="./photos/p1.jpeg" alt="photo">
 </div>
 
 <p id="message">You make my life special 💖</p>
 
-<button>Touch / Click Anywhere to Play Music 🎶</button>
+<button id="playBtn">Touch / Click Anywhere to Play Music 🎶</button>
 
 <!-- AUDIO -->
-<audio id="song1" loop>
-    <source src="music.mpeg" type="audio/mpeg">
+<audio id="song1">
+    <source src="./music.mpeg" type="audio/mpeg">
 </audio>
 
-<audio id="song2" loop>
-    <source src="music2.mpeg" type="audio/mpeg">
+<audio id="song2">
+    <source src="./music2.mpeg" type="audio/mpeg">
 </audio>
 
 <script>
-/* ---------------- SLIDER DATA ---------------- */
+/* -------- SLIDER DATA -------- */
 const photos = [
-  "photos/p1.jpeg",
-  "photos/p2.jpeg",
-  "photos/p3.jpeg",
-  "photos/p4.jpeg",
-  "photos/p5.jpeg",
-  "photos/p6.jpeg",
-  "photos/p7.jpeg",
-  "photos/p8.jpeg",
-  "photos/p9.jpeg"
+  "./photos/p1.jpeg",
+  "./photos/p2.jpeg",
+  "./photos/p3.jpeg",
+  "./photos/p4.jpeg",
+  "./photos/p5.jpeg",
+  "./photos/p6.jpeg",
+  "./photos/p7.jpeg",
+  "./photos/p8.jpeg",
+  "./photos/p9.jpeg"
 ];
 
 const messages = [
@@ -127,14 +124,14 @@ const img = document.getElementById("photo");
 const msg = document.getElementById("message");
 
 /* AUTO SLIDE */
-function slideNext(direction = 1) {
-    img.style.transform = `translateX(${direction * -100}%)`;
+function slideNext(dir = 1) {
+    img.style.transform = `translateX(${dir * -100}%)`;
 
     setTimeout(() => {
-        index = (index + direction + photos.length) % photos.length;
+        index = (index + dir + photos.length) % photos.length;
         img.src = photos[index];
-        msg.innerHTML = messages[index % messages.length];
-        img.style.transform = `translateX(${direction * 100}%)`;
+        msg.textContent = messages[index % messages.length];
+        img.style.transform = `translateX(${dir * 100}%)`;
     }, 400);
 
     setTimeout(() => {
@@ -144,20 +141,21 @@ function slideNext(direction = 1) {
 
 setInterval(() => slideNext(1), 4000);
 
-/* ---------------- MOBILE SWIPE ---------------- */
+/* MOBILE SWIPE */
 let startX = 0;
+const slider = document.querySelector(".slider");
 
-document.querySelector(".slider").addEventListener("touchstart", e => {
+slider.addEventListener("touchstart", e => {
     startX = e.touches[0].clientX;
 });
 
-document.querySelector(".slider").addEventListener("touchend", e => {
-    let endX = e.changedTouches[0].clientX;
+slider.addEventListener("touchend", e => {
+    const endX = e.changedTouches[0].clientX;
     if (startX - endX > 50) slideNext(1);
     if (endX - startX > 50) slideNext(-1);
 });
 
-/* ---------------- MUSIC AUTOPLAY ---------------- */
+/* MUSIC */
 let started = false;
 const song1 = document.getElementById("song1");
 const song2 = document.getElementById("song2");
@@ -169,20 +167,18 @@ document.body.addEventListener("click", () => {
     }
 });
 
-/* Auto play second song after first */
 song1.addEventListener("ended", () => {
     song2.play();
 });
 
-/* ---------------- HEART BACKGROUND ---------------- */
+/* HEARTS */
 function createHeart() {
     const heart = document.createElement("div");
     heart.className = "heart";
-    heart.innerHTML = "💖";
+    heart.textContent = "💖";
     heart.style.left = Math.random() * 100 + "vw";
     heart.style.fontSize = (Math.random() * 20 + 15) + "px";
     document.body.appendChild(heart);
-
     setTimeout(() => heart.remove(), 6000);
 }
 
